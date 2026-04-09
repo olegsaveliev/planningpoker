@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planning Poker — Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/room.css">
+</head>
+<body>
+
+  <!-- Name entry overlay -->
+  <div id="nameOverlay" class="overlay">
+    <div class="overlay-card">
+      <h2>Join Room</h2>
+      <input id="nameInput" type="text" placeholder="Your name" maxlength="12" class="name-input" autofocus>
+      <button id="nameBtn" class="btn btn-primary">Enter</button>
+      <p id="nameError" class="error-text"></p>
+    </div>
+  </div>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <a href="/" class="logo">Planning Poker</a>
+    <div class="top-bar-right">
+      <button id="copyLinkBtn" class="btn btn-small" title="Copy invite link">Copy Link</button>
+      <span id="roomIdLabel" class="room-id"></span>
+    </div>
+  </div>
+
+  <!-- Room scene -->
+  <div class="room-wrapper">
+    <div id="room" class="room">
+      <!-- Furniture rendered by CSS -->
+      <div class="round-table"></div>
+      <div class="whiteboard"><span id="whiteboardText">Pick your cards!</span></div>
+      <div class="plant"></div>
+      <div class="couch"></div>
+
+      <!-- Desk slots — positioned by CSS, populated by JS -->
+      <div class="desk-slot" data-seat="0"></div>
+      <div class="desk-slot" data-seat="1"></div>
+      <div class="desk-slot" data-seat="2"></div>
+      <div class="desk-slot" data-seat="3"></div>
+      <div class="desk-slot" data-seat="4"></div>
+      <div class="desk-slot" data-seat="5"></div>
+      <div class="desk-slot" data-seat="6"></div>
+      <div class="desk-slot" data-seat="7"></div>
+    </div>
+  </div>
+
+  <!-- Card selector -->
+  <div id="cardBar" class="card-bar">
+    <div class="card-bar-inner">
+      <button class="card" data-value="0">0</button>
+      <button class="card" data-value="1">1</button>
+      <button class="card" data-value="2">2</button>
+      <button class="card" data-value="3">3</button>
+      <button class="card" data-value="5">5</button>
+      <button class="card" data-value="8">8</button>
+      <button class="card" data-value="13">13</button>
+      <button class="card" data-value="21">21</button>
+      <button class="card" data-value="?">?</button>
+    </div>
+  </div>
+
+  <!-- Host controls -->
+  <div id="hostControls" class="host-controls hidden">
+    <button id="revealBtn" class="btn btn-reveal">Reveal Votes</button>
+    <button id="resetBtn" class="btn btn-reset hidden">New Round</button>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/room.js"></script>
+</body>
+</html>

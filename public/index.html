@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planning Poker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="landing">
+    <h1 class="title">Planning<br>Poker</h1>
+    <p class="subtitle">Estimate together, pixel by pixel</p>
+    <button id="createBtn" class="btn btn-primary">Create Room</button>
+    <div class="divider">or join an existing room</div>
+    <div class="join-row">
+      <input id="roomInput" type="text" placeholder="Paste room link or ID" class="input">
+      <button id="joinBtn" class="btn btn-secondary">Join</button>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('createBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('createBtn');
+      btn.disabled = true;
+      btn.textContent = 'Creating...';
+      try {
+        const res = await fetch('/api/create-room', { method: 'POST' });
+        const { roomId } = await res.json();
+        window.location.href = '/room/' + roomId;
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = 'Create Room';
+        alert('Failed to create room. Please try again.');
+      }
+    });
+
+    document.getElementById('joinBtn').addEventListener('click', () => {
+      const val = document.getElementById('roomInput').value.trim();
+      if (!val) return;
+      // Accept full URL or just the room ID
+      const match = val.match(/\/room\/([a-z0-9]+)/i);
+      if (match) {
+        window.location.href = '/room/' + match[1];
+      } else if (/^[a-z0-9]+$/i.test(val)) {
+        window.location.href = '/room/' + val;
+      } else {
+        alert('Invalid room link or ID');
+      }
+    });
+
+    document.getElementById('roomInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') document.getElementById('joinBtn').click();
+    });
+  </script>
+</body>
+</html>
