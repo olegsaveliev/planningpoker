@@ -42,7 +42,10 @@
       </div>
 
       <!-- Furniture rendered by CSS -->
-      <div class="poker-table"><span class="table-slogan">ESTIMATE. DEBATE. ITERATE.</span></div>
+      <div class="poker-table">
+        <span class="table-slogan">ESTIMATE. DEBATE. ITERATE.</span>
+        <button id="tableCardsBtn" class="table-cards-btn">PICK CARDS</button>
+      </div>
       <div class="whiteboard"><span id="whiteboardText">Pick your cards!</span></div>
       <div class="plant"></div>
       <div class="plant-tall"></div>
@@ -88,24 +91,25 @@
     </div>
   </div>
 
-  <!-- Host controls -->
-  <div id="hostControls" class="host-controls hidden">
-    <button id="revealBtn" class="btn btn-reveal">Reveal Votes</button>
-    <button id="resetBtn" class="btn btn-reset hidden">New Round</button>
-  </div>
-
-  <!-- Card selector -->
-  <div id="cardBar" class="card-bar">
-    <div class="card-bar-inner">
-      <button class="card" data-value="0">0</button>
-      <button class="card" data-value="1">1</button>
-      <button class="card" data-value="2">2</button>
-      <button class="card" data-value="3">3</button>
-      <button class="card" data-value="5">5</button>
-      <button class="card" data-value="8">8</button>
-      <button class="card" data-value="13">13</button>
-      <button class="card" data-value="21">21</button>
-      <button class="card" data-value="?">?</button>
+  <!-- Side panel: cards + host controls -->
+  <div id="sidePanel" class="side-panel">
+    <button id="panelToggle" class="panel-toggle">CARDS</button>
+    <div class="panel-content">
+      <div id="hostControls" class="host-controls hidden">
+        <button id="revealBtn" class="btn btn-reveal">Reveal Votes</button>
+        <button id="resetBtn" class="btn btn-reset hidden">New Round</button>
+      </div>
+      <div class="card-grid">
+        <button class="card" data-value="0">0</button>
+        <button class="card" data-value="1">1</button>
+        <button class="card" data-value="2">2</button>
+        <button class="card" data-value="3">3</button>
+        <button class="card" data-value="5">5</button>
+        <button class="card" data-value="8">8</button>
+        <button class="card" data-value="13">13</button>
+        <button class="card" data-value="21">21</button>
+        <button class="card" data-value="?">?</button>
+      </div>
     </div>
   </div>
 

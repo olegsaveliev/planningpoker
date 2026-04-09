@@ -187,10 +187,14 @@ function fitRoom() {
   const wrapper = document.querySelector('.room-wrapper');
   const room = document.getElementById('room');
   if (!wrapper || !room) return;
-  const scaleX = wrapper.clientWidth / ROOM_W;
-  const scaleY = wrapper.clientHeight / ROOM_H;
-  const scale = Math.min(scaleX, scaleY, 1);
-  room.style.transform = `scale(${scale})`;
+
+  // Temporarily remove zoom to measure natural wrapper size
+  room.style.zoom = '1';
+  const availW = wrapper.clientWidth - 8;
+  const availH = wrapper.clientHeight - 8;
+  const scale = Math.min(availW / ROOM_W, availH / ROOM_H, 1);
+  // zoom changes layout size unlike transform:scale, so bottom UI stays visible
+  room.style.zoom = scale;
 }
 
 let resizeRAF = null;
@@ -199,6 +203,17 @@ window.addEventListener('resize', () => {
   resizeRAF = requestAnimationFrame(fitRoom);
 });
 fitRoom();
+
+// --- Side panel toggle (button on table) ---
+
+const sidePanel = document.getElementById('sidePanel');
+const tableCardsBtn = document.getElementById('tableCardsBtn');
+
+tableCardsBtn.addEventListener('click', () => {
+  const isOpen = sidePanel.classList.toggle('open');
+  tableCardsBtn.textContent = isOpen ? 'CLOSE' : 'PICK CARDS';
+  tableCardsBtn.classList.toggle('active', isOpen);
+});
 
 // --- Socket.IO ---
 
