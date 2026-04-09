@@ -13,9 +13,12 @@
   <!-- Name entry overlay -->
   <div id="nameOverlay" class="overlay">
     <div class="overlay-card">
-      <h2>Join Room</h2>
+      <h2>What's your name?</h2>
       <input id="nameInput" type="text" placeholder="Your name" maxlength="12" class="name-input" autofocus>
-      <button id="nameBtn" class="btn btn-primary">Enter</button>
+      <div class="name-buttons">
+        <button id="nameBtn" class="btn btn-primary">Join</button>
+        <button id="randomNameBtn" class="btn btn-random">Random</button>
+      </div>
       <p id="nameError" class="error-text"></p>
     </div>
   </div>
@@ -32,21 +35,56 @@
   <!-- Room scene -->
   <div class="room-wrapper">
     <div id="room" class="room">
+      <!-- Loading screen -->
+      <div id="loadingScreen" class="loading-screen">
+        <div id="hourglass" class="hourglass"></div>
+        <div class="loading-text">Connecting...</div>
+      </div>
+
       <!-- Furniture rendered by CSS -->
-      <div class="round-table"></div>
+      <div class="poker-table"><span class="table-slogan">ESTIMATE. DEBATE. ITERATE.</span></div>
       <div class="whiteboard"><span id="whiteboardText">Pick your cards!</span></div>
       <div class="plant"></div>
+      <div class="plant-tall"></div>
+      <div class="plant-small"></div>
+      <div class="water-cooler"></div>
+      <div class="bookshelf"></div>
+      <div class="clock"></div>
+      <div class="poster"></div>
+      <div class="trash-bin"></div>
+      <div class="door-frame"></div>
       <div class="couch"></div>
+      <div class="rug"></div>
+      <div class="kitchen">
+        <div class="kitchen-counter"></div>
+        <div class="kitchen-shelf"></div>
+        <div class="coffee-machine"></div>
+        <div class="coffee-steam"></div>
+        <div class="kitchen-mug1"></div>
+        <div class="kitchen-mug2"></div>
+      </div>
 
-      <!-- Desk slots — positioned by CSS, populated by JS -->
-      <div class="desk-slot" data-seat="0"></div>
-      <div class="desk-slot" data-seat="1"></div>
-      <div class="desk-slot" data-seat="2"></div>
-      <div class="desk-slot" data-seat="3"></div>
-      <div class="desk-slot" data-seat="4"></div>
-      <div class="desk-slot" data-seat="5"></div>
-      <div class="desk-slot" data-seat="6"></div>
-      <div class="desk-slot" data-seat="7"></div>
+      <!-- Seat slots — positioned by JS around the poker table -->
+      <div class="seat-slot" data-seat="0"></div>
+      <div class="seat-slot" data-seat="1"></div>
+      <div class="seat-slot" data-seat="2"></div>
+      <div class="seat-slot" data-seat="3"></div>
+      <div class="seat-slot" data-seat="4"></div>
+      <div class="seat-slot" data-seat="5"></div>
+      <div class="seat-slot" data-seat="6"></div>
+      <div class="seat-slot" data-seat="7"></div>
+      <div class="seat-slot" data-seat="8"></div>
+      <div class="seat-slot" data-seat="9"></div>
+      <div class="seat-slot" data-seat="10"></div>
+      <div class="seat-slot" data-seat="11"></div>
+      <div class="seat-slot" data-seat="12"></div>
+      <div class="seat-slot" data-seat="13"></div>
+      <div class="seat-slot" data-seat="14"></div>
+      <div class="seat-slot" data-seat="15"></div>
+      <div class="seat-slot" data-seat="16"></div>
+      <div class="seat-slot" data-seat="17"></div>
+      <div class="seat-slot" data-seat="18"></div>
+      <div class="seat-slot" data-seat="19"></div>
     </div>
   </div>
 

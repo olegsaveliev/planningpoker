@@ -39,13 +39,16 @@ function getNextSeatIndex(room, preferredSeat) {
     taken.add(p.seatIndex);
   }
   // Try preferred seat first (for reconnects)
-  if (preferredSeat != null && preferredSeat >= 0 && preferredSeat < 8 && !taken.has(preferredSeat)) {
+  if (preferredSeat != null && preferredSeat >= 0 && preferredSeat < 20 && !taken.has(preferredSeat)) {
     return preferredSeat;
   }
-  for (let i = 0; i < 8; i++) {
-    if (!taken.has(i)) return i;
+  // Pick a random available seat
+  const available = [];
+  for (let i = 0; i < 20; i++) {
+    if (!taken.has(i)) available.push(i);
   }
-  return -1; // room full
+  if (available.length === 0) return -1;
+  return available[Math.floor(Math.random() * available.length)];
 }
 
 function buildRoomState(room) {
@@ -76,6 +79,31 @@ function transferHost(room) {
   if (room.participants.size === 0) return;
   const firstSocketId = room.participants.keys().next().value;
   room.hostSocketId = firstSocketId;
+}
+
+// Remove a socket from its current room (used on disconnect and room-switch)
+function leaveCurrentRoom(socket) {
+  const oldRoomId = socket.roomId;
+  if (!oldRoomId) return;
+  const oldRoom = rooms.get(oldRoomId);
+  if (!oldRoom) { socket.roomId = null; return; }
+
+  oldRoom.participants.delete(socket.id);
+  socket.leave(oldRoomId);
+
+  if (oldRoom.participants.size === 0) {
+    const timer = setTimeout(() => {
+      rooms.delete(oldRoomId);
+      roomCleanupTimers.delete(oldRoomId);
+    }, 30000);
+    roomCleanupTimers.set(oldRoomId, timer);
+  } else {
+    if (oldRoom.hostSocketId === socket.id) {
+      transferHost(oldRoom);
+    }
+    broadcastRoomState(oldRoom);
+  }
+  socket.roomId = null;
 }
 
 // --- Security headers ---
@@ -158,7 +186,16 @@ const VALID_VOTES = new Set(['0', '1', '2', '3', '5', '8', '13', '21', '?']);
 
 io.on('connection', (socket) => {
 
+  // Per-socket rate limiting (max 20 events/second)
+  const rl = { count: 0, resetAt: Date.now() + 1000 };
+  function isRateLimited() {
+    const now = Date.now();
+    if (now > rl.resetAt) { rl.count = 0; rl.resetAt = now + 1000; }
+    return ++rl.count > 20;
+  }
+
   socket.on('join-room', (data) => {
+    if (isRateLimited()) return;
     // Input validation
     if (!data || typeof data !== 'object') return;
     const { roomId, name, preferredSeat } = data;
@@ -173,6 +210,12 @@ io.on('connection', (socket) => {
       return;
     }
 
+    // Block invisible/control characters
+    if (/[\x00-\x1f\x7f\u200b-\u200f\u2028-\u202f\ufeff]/u.test(trimmedName)) {
+      socket.emit('error-msg', { message: 'Name contains invalid characters' });
+      return;
+    }
+
     if (!/^[a-z0-9]{1,10}$/.test(roomId)) {
       socket.emit('error-msg', { message: 'Invalid room ID' });
       return;
@@ -183,6 +226,15 @@ io.on('connection', (socket) => {
       socket.emit('error-msg', { message: 'Room not found' });
       return;
     }
+
+    // Already in this room — just re-broadcast current state
+    if (room.participants.has(socket.id)) {
+      broadcastRoomState(room);
+      return;
+    }
+
+    // Leave previous room if switching rooms
+    leaveCurrentRoom(socket);
 
     // Check name uniqueness
     for (const p of room.participants.values()) {
@@ -195,7 +247,7 @@ io.on('connection', (socket) => {
     const parsedSeat = typeof preferredSeat === 'number' ? preferredSeat : undefined;
     const seatIndex = getNextSeatIndex(room, parsedSeat);
     if (seatIndex === -1) {
-      socket.emit('error-msg', { message: 'Room is full (max 8)' });
+      socket.emit('error-msg', { message: 'Room is full (max 20)' });
       return;
     }
 
@@ -226,6 +278,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('cast-vote', (data) => {
+    if (isRateLimited()) return;
     // Input validation
     if (!data || typeof data !== 'object') return;
     const { vote } = data;
@@ -252,6 +305,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('reveal-votes', () => {
+    if (isRateLimited()) return;
     const room = rooms.get(socket.roomId);
     if (!room) return;
     if (room.hostSocketId !== socket.id) return;
@@ -261,6 +315,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('reset-votes', () => {
+    if (isRateLimited()) return;
     const room = rooms.get(socket.roomId);
     if (!room) return;
     if (room.hostSocketId !== socket.id) return;
@@ -273,28 +328,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    const roomId = socket.roomId;
-    if (!roomId) return;
-
-    const room = rooms.get(roomId);
-    if (!room) return;
-
-    room.participants.delete(socket.id);
-
-    if (room.participants.size === 0) {
-      // Schedule room cleanup
-      const timer = setTimeout(() => {
-        rooms.delete(roomId);
-        roomCleanupTimers.delete(roomId);
-      }, 30000);
-      roomCleanupTimers.set(roomId, timer);
-    } else {
-      // Transfer host if needed
-      if (room.hostSocketId === socket.id) {
-        transferHost(room);
-      }
-      broadcastRoomState(room);
-    }
+    leaveCurrentRoom(socket);
   });
 });
 
