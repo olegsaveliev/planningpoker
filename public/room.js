@@ -108,7 +108,7 @@ const HOURGLASS_MAP = [
 
 const ROOM_W = 1100, ROOM_H = 700;
 const TABLE_CX = 550, TABLE_CY = 350;
-const SEAT_RX = 385, SEAT_RY = 265;  // outer ellipse (characters)
+const SEAT_RX = 380, SEAT_RY = 260;  // outer ellipse (characters)
 const CARD_RX = 270, CARD_RY = 180;  // inner ellipse (vote cards on felt)
 
 // 20 seat angles (degrees clockwise from 12 o'clock)
@@ -178,7 +178,7 @@ const pokerTable = document.querySelector('.poker-table');
 seatSlots.forEach((slot, i) => {
   const pos = SEAT_POSITIONS[i];
   slot.style.left = (pos.x - 35) + 'px';
-  slot.style.top = (pos.y - 40) + 'px';
+  slot.style.top = (pos.y - 21) + 'px';
 });
 
 // --- Room scaling to fit viewport ---

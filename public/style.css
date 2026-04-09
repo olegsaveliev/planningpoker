@@ -88,21 +88,7 @@ body {
   font-size: 8px;
   color: #7a7a9a;
   margin: 28px 0 20px;
-  position: relative;
 }
-
-.divider::before,
-.divider::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 30%;
-  height: 1px;
-  background: #5a5a7a;
-}
-
-.divider::before { left: 0; }
-.divider::after { right: 0; }
 
 .join-row {
   display: flex;
